@@ -1,5 +1,3 @@
-const { default: Moralis } = require("moralis/types");
-
 //RETURNS TO DELETE = IF RETURN TRUE => DELETE, IF RETURN FALSE => DO NOT DELETE
 Moralis.Cloud.define("onMessage", async (request) => {
     let logger = Moralis.Cloud.getLogger();
