@@ -1,19 +1,12 @@
-//Everything up until BOT CODE is just to keep the bot alive
-const express = require('express');
-const app = express();
-const port = 3000;
-
-app.get('/', (req, res) => res.send('Hello World!'));
-app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
-
-
-//BOT CODE
 const TOKEN = process.env['TOKEN'];
 const APP_ID = process.env["APP_ID"];
 const SERVER_URL = process.env["SERVER_URL"];
 const Discord = require("discord.js"); 
 const client = new Discord.Client();
 const fetch = require("node-fetch");
+const keepAlive = require("./server")
+
+keepAlive();
 
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}`);
