@@ -1,3 +1,14 @@
+//Everything up until BOT CODE is just to keep the bot alive
+const express = require('express');
+const app = express();
+const port = 3000;
+
+app.get('/', (req, res) => res.send('Hello World!'));
+
+app.listen(port, () => console.log(`Example app listening at http://localhost:${port}`));
+
+
+//BOT CODE
 const TOKEN = process.env['TOKEN'];
 const APP_ID = process.env["APP_ID"];
 const SERVER_URL = process.env["SERVER_URL"];
@@ -10,7 +21,7 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
-  if (msg.author.id != "926422385094168577" && !msg.author.bot && !msg.system){
+  if (msg.author.id != "926422385094168577" && !msg.author.bot && !msg.system && msg.content != ""){
     let currentAuthor = msg.author;
     let currentMessageString;
     if (msg.content.length < 30) {
