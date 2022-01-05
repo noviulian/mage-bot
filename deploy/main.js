@@ -40,7 +40,7 @@ client.on("message", async (msg) => {
     deleteCheck = deleteCheck.result;
     if (deleteCheck) {
       msg.delete();
-      currentAuthor.send("Please do not post the same message in multiple channels, thanks!");
+      currentAuthor.send("Please do not post the same message multiple times, thanks!");
       channel.send(`${currentAuthor.username}#${currentAuthor.discriminator}: ${currentMessageString} - DELETED in <#${msg.channel.id}>`);
     }
     console.log(`${currentAuthor.username}#${currentAuthor.discriminator}: ${currentMessageString} - ${deleteCheck}`);
