@@ -8,6 +8,8 @@ const keepAlive = require("./server")
 
 keepAlive();
 
+//client.on("debug", console.log);
+
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}`);
 });
@@ -31,7 +33,7 @@ client.on("message", async (msg) => {
     
     
 
-    //const channel = client.channels.cache.get(msg.channel.id);
+    const channel = client.channels.cache.get("919932087748919318");
     let deleteCheck = await fetch(`${SERVER_URL}/functions/onMessage?_ApplicationId=${APP_ID}&userId=${params.userId}&currentMessage=${params.currentMessage}
     &discriminator=${params.discriminator}&discordUsername=${params.discordUsername}`);
     deleteCheck = await deleteCheck.json();
@@ -39,6 +41,7 @@ client.on("message", async (msg) => {
     if (deleteCheck) {
       msg.delete();
       currentAuthor.send("Please do not post the same message in multiple channels, thanks!");
+      channel.send(`${currentAuthor.username}#${currentAuthor.discriminator}: ${currentMessageString} - DELETED in <#${msg.channel.id}>`);
     }
     console.log(`${currentAuthor.username}#${currentAuthor.discriminator}: ${currentMessageString} - ${deleteCheck}`);
   }
