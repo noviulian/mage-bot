@@ -15,9 +15,28 @@ client.on("ready", () => {
 });
 
 client.on("message", async (msg) => {
-  if (msg.author.id != "926422385094168577" && !msg.author.bot && !msg.system && msg.content != ""){
-    let currentAuthor = msg.author;
+  let currentAuthor = msg.author;
+  
+  if (msg.author.id != "926422385094168577" && !msg.author.bot && !msg.system && msg.content != "" && !isMoralisTeam){
     let currentMessageString;
+    let isMoralisTeam = false;
+
+    /*if (msg.member.roles.cache.find(r => r.name === "Moralis Team")) {
+      isMoralisTeam = true;
+    }*/
+    adminrole = msg.member.roles.cache.find(role => role.name == "Moralis Team");
+    if(adminrole != null){
+      isMoralisTeam = true;
+      let currentMessageString;
+      if (msg.content.length < 30) {
+          currentMessageString = msg.content.toLowerCase();
+      } else {
+          currentMessageString = msg.content.slice(0, 30).toLowerCase();
+      }
+      console.log(`${currentAuthor.username}#${currentAuthor.discriminator}: ${currentMessageString} - Team`);
+    } else {
+      isMoralisTeam = false;
+    }
     if (msg.content.length < 30) {
         currentMessageString = msg.content.toLowerCase();
     } else {
