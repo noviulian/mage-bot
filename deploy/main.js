@@ -57,6 +57,9 @@ client.on("message", async (msg) => {
     &discriminator=${params.discriminator}&discordUsername=${params.discordUsername}`);
     deleteCheck = await deleteCheck.json();
     deleteCheck = deleteCheck.result;
+    if (currentMessageString == "gm") {
+      deleteCheck = false;
+    }
     if (deleteCheck) {
       msg.delete();
       currentAuthor.send("Please do not post the same message multiple times, thanks!");

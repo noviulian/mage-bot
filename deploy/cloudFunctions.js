@@ -5,10 +5,6 @@ Moralis.Cloud.define("onMessage", async (request) => {
     const currMsg = request.params.currentMessage;
     const discordUsername = request.params.discordUsername;
     const discriminator = request.params.discriminator;
-
-    if (currMsg === "gm") {
-        return false;
-    }
     
     let dcQuery = new Moralis.Query("DiscordUsers");
     dcQuery.equalTo("userId", userId);
