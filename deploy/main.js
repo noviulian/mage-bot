@@ -57,7 +57,7 @@ client.on("message", async (msg) => {
     &discriminator=${params.discriminator}&discordUsername=${params.discordUsername}`);
     deleteCheck = await deleteCheck.json();
     deleteCheck = deleteCheck.result;
-    const whiteListArray = ["gm", "gm!", "gm!!", "gn", "gn!"];
+    const whiteListArray = ["gm", "gm!", "gm!!!", "gm!!!!", "gn", "gn!"];
     if (whiteListArray.includes(currentMessageString)) {
       deleteCheck = false;
     }
