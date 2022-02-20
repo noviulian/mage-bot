@@ -50,3 +50,29 @@ Moralis.Cloud.define("onMessage", async (request) => {
         return false;
     }
 });
+
+
+Moralis.Cloud.define("getTopTen", async () => {
+    let logger = Moralis.Cloud.getLogger();
+    let returnObject = {};
+    let countQuery = new Moralis.Query("DiscordUsers");
+    countQuery.descending("deleteCount");
+    countQuery.limit(10);
+    let result = await countQuery.find({useMasterKey: true});
+    logger.info(JSON.stringify(result));
+    return result;
+});
+
+Moralis.Cloud.define("getDeletedForUser", async (request) => {
+    let logger = Moralis.Cloud.getLogger();
+    let userQuery = new Moralis.Query("DiscordUsers");
+    userQuery.equalTo("userId", request.params.userId);
+    let results = await userQuery.find({useMasterKey: true});
+    if (results.length < 1) {
+        return 0;
+    } else {
+        let result = results[0];
+        logger.info(JSON.stringify(result));
+        return result.attributes.deleteCount;
+    }
+});
