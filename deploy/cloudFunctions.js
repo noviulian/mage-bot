@@ -18,6 +18,7 @@ Moralis.Cloud.define("onMessage", async (request) => {
         newUser.set("userId", userId);
         newUser.set("discordUsername", discordUsername);
         newUser.set("discriminator", discriminator);
+        newUser.set("deleteCount", 0);
         newUser.save(null, {useMasterKey: true});
         return false;
     } 
@@ -25,6 +26,9 @@ Moralis.Cloud.define("onMessage", async (request) => {
     dcQuery.equalTo("userId", userId);
     let msgResult = await dcQuery.find({useMasterKey: true});
     let lastMsg = msgResult[0].attributes.lastMessage;
+    let currentDelCount = msgResult[0].attributes.deleteCount;
+
+    //logger.info(++currentDelCount);
 
     userResult[0].set("lastMessage", currMsg);
     userResult[0].save(null, {useMasterKey: true});
@@ -33,7 +37,14 @@ Moralis.Cloud.define("onMessage", async (request) => {
         return false;
     }
     
-    if (lastMsg === currMsg) { 
+    if (lastMsg === currMsg) {
+        if (currentDelCount === undefined) {
+            userResult[0].set("deleteCount", 1);
+            userResult[0].save(null, {useMasterKey: true});
+        } else {
+            userResult[0].set("deleteCount", ++currentDelCount);
+            userResult[0].save(null, {useMasterKey: true});
+        }
         return true;
     } else {
         return false;
