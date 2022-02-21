@@ -54,7 +54,7 @@ Moralis.Cloud.define("onMessage", async (request) => {
 
 Moralis.Cloud.define("getTopTen", async () => {
     let logger = Moralis.Cloud.getLogger();
-    let returnObject = {};
+    //let returnObject = {};
     let countQuery = new Moralis.Query("DiscordUsers");
     countQuery.descending("deleteCount");
     countQuery.limit(10);
