@@ -57,7 +57,6 @@ client.on("message", async (msg) => {
       channel.send(`I have deleted messages from *${searchId}* **0 times**`);
     }
   } else if (isAdmin && msg.content.substring(0, 5) === "~$top") {
-    const channel = client.channels.cache.get("919932087748919318");
     let result;
     await fetch(`${SERVER_URL}/functions/getTopTen?_ApplicationId=${APP_ID}`)
     .then((res) => res.json())
