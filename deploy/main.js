@@ -100,7 +100,8 @@ client.on("message", async (msg) => {
     deleteCheck = deleteCheck.result;
     //console.log(deleteCheck);
     const whiteListArray = ["gm", "gm!", "gm!!!", "gm!!!!", "gn", "gn!"];
-    if (whiteListArray.includes(currentMessageString)) {
+    const channelWhitelist = ["876079404676186112"];
+    if (whiteListArray.includes(currentMessageString) || channelWhitelist.includes(msg.channel.id)) {
       deleteCheck = false;
     }
     if (deleteCheck) {
