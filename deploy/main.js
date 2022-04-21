@@ -70,6 +70,16 @@ client.on("message", async (msg) => {
       messageString += `**${discordUsername}** *(${discordId})* - **${deleteCount}**\n`;
     });
     channel.send(messageString);
+  } else if (isAdmin && msg.content.substring(0, 7) === "~$clear") {
+    let result;
+    let searchId = msg.content.substring(8);
+    await fetch(`${SERVER_URL}/functions/resetMessage?_ApplicationId=${APP_ID}&userId=${searchId}`)
+    .then((res) => res.json())
+    .then((data) => result = data.result);
+    const channel = client.channels.cache.get("919932087748919318");
+    //console.log(result);
+    let messageString = result == 1 ? `Cleared message history for ${searchId}` : "Yikes, something ain't right";
+    channel.send(messageString);
   } else if (msg.author.id != "926422385094168577" && !msg.author.bot && !msg.system && msg.content != "" && !isMoralisTeam){
     //msg.reply(msg.content);
     //console.log(currentAuthor);

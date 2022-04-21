@@ -76,3 +76,17 @@ Moralis.Cloud.define("getDeletedForUser", async (request) => {
         return result.attributes.deleteCount;
     }
 });
+
+Moralis.Cloud.define("resetMessage", async (request) => {
+    let userQuery = new Moralis.Query("DiscordUsers");
+    userQuery.equalTo("userId", request.params.userId);
+    let results = await userQuery.find({useMasterKey: true});
+    if (results.length < 1) {
+        return 0;
+    } else {
+        let user = results[0];
+        user.set("lastMessage", "");
+        user.save();
+        return 1;
+    }
+}); 
