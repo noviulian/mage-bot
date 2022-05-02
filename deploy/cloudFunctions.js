@@ -90,3 +90,29 @@ Moralis.Cloud.define("resetMessage", async (request) => {
         return 1;
     }
 }); 
+
+Moralis.Cloud.define("seekerCheck", async (request) => {
+    let logger = Moralis.Cloud.getLogger();
+    let timerQuery = new Moralis.Query("JobSeekersTimer");
+    timerQuery.equalTo("userId", request.params.userId);
+    let timerResult = await timerQuery.find({useMasterKey: true});
+    let timerExists = (timerResult.length > 0) ? (true) : (false);
+    if (!timerExists) {
+        let seekerTimer = Moralis.Object.extend("JobSeekersTimer");
+        let newUser = new seekerTimer();
+
+        newUser.set("nextMessageTime", Math.floor(Date.now() / 1000) + 3*259200);
+        newUser.set("userId", request.params.userId);
+        newUser.save(null, {useMasterKey: true});
+        return false;
+    }
+
+    let timer = timerResult[0].attributes.nextMessageTime;
+    if (timer > Date.now() / 1000) {
+        return true;
+    }
+
+    timerResult[0].set("nextMessageTime", Date.now() / 1000 + 3*259200);
+    await timerResult[0].save();
+    return false;
+});

@@ -80,6 +80,17 @@ client.on("message", async (msg) => {
     //console.log(result);
     let messageString = result == 1 ? `Cleared message history for ${searchId}` : "Yikes, something ain't right";
     channel.send(messageString);
+  } else if (!isAdmin && msg.channel.id == "970071769589370890") { //check if message is in job-seekers
+    let deleteCheck = await fetch(`${SERVER_URL}/functions/seekerCheck?_ApplicationId=${APP_ID}&userId=${msg.author.id}`);
+    const channel = client.channels.cache.get("919932087748919318");
+    deleteCheck = await deleteCheck.json();
+    deleteCheck = deleteCheck.result;
+    if (deleteCheck) {
+      msg.delete();
+      currentAuthor.send("It has not been 3 days since your last post in <#970071769589370890>");
+      channel.send(`${currentAuthor.username}#${currentAuthor.discriminator} tried to post in <#970071769589370890> while on cooldown`);
+    }
+    console.log(`${currentAuthor.username}#${currentAuthor.discriminator} posted in job-seekers => ${deleteCheck}`);
   } else if (msg.author.id != "926422385094168577" && !msg.author.bot && !msg.system && msg.content != "" && !isMoralisTeam){
     //msg.reply(msg.content);
     //console.log(currentAuthor);
