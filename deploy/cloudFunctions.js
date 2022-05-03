@@ -101,7 +101,7 @@ Moralis.Cloud.define("seekerCheck", async (request) => {
         let seekerTimer = Moralis.Object.extend("JobSeekersTimer");
         let newUser = new seekerTimer();
 
-        newUser.set("nextMessageTime", Math.floor(Date.now() / 1000) + 3*259200);
+        newUser.set("nextMessageTime", Math.floor(Date.now() / 1000) + 259200);
         newUser.set("userId", request.params.userId);
         newUser.save(null, {useMasterKey: true});
         return false;
