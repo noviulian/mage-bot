@@ -81,10 +81,21 @@ client.on("message", async (msg) => {
     let messageString = result == 1 ? `Cleared message history for ${searchId}` : "Yikes, something ain't right";
     channel.send(messageString);
   } else if (!isAdmin && msg.channel.id == "970071769589370890") { //check if message is in job-seekers
-    let deleteCheck = await fetch(`${SERVER_URL}/functions/seekerCheck?_ApplicationId=${APP_ID}&userId=${msg.author.id}`);
+    let _delCheckFail = false;
+    let deleteCheck = await fetch(`${SERVER_URL}/functions/seekerCheck?_ApplicationId=${APP_ID}&userId=${msg.author.id}`)
+    .catch((err) => {
+      console.log(err);
+      _delCheckFail = true;
+    })
     const channel = client.channels.cache.get("919932087748919318");
-    deleteCheck = await deleteCheck.json();
-    deleteCheck = deleteCheck.result;
+    if (_delCheckFail) {
+      deleteCheck = false;
+      channel.send(`Delete check failed for msgId: ${msg.id} from user: ${msg.author.id}`);
+    } else {
+      deleteCheck = await deleteCheck.json();
+      deleteCheck = deleteCheck.result;
+    }
+    
     if (deleteCheck) {
       msg.delete();
       currentAuthor.send("It has not been 3 days since your last post in <#970071769589370890>");
@@ -115,10 +126,20 @@ client.on("message", async (msg) => {
 
     const channel = client.channels.cache.get("919932087748919318");
     //console.log(channel);
+    let _delCheckFail = false;
     let deleteCheck = await fetch(`${SERVER_URL}/functions/onMessage?_ApplicationId=${APP_ID}&userId=${params.userId}&currentMessage=${params.currentMessage}
-    &discriminator=${params.discriminator}&discordUsername=${params.discordUsername}`);
-    deleteCheck = await deleteCheck.json();
-    deleteCheck = deleteCheck.result;
+    &discriminator=${params.discriminator}&discordUsername=${params.discordUsername}`)
+    .catch((err) => {
+      console.log(err);
+      _delCheckFail = true;
+    })
+    if (_delCheckFail) {
+      deleteCheck = false;
+      channel.send(`Delete check failed for msgId: ${msg.id} from user: ${msg.author.id}`);
+    } else {
+      deleteCheck = await deleteCheck.json();
+      deleteCheck = deleteCheck.result;
+    }
     //console.log(deleteCheck);
     const whiteListArray = ["gm", "gm!", "gm!!!", "gm!!!!", "gn", "gn!"];
     const channelWhitelist = ["876079404676186112", "932570355372023828"];
