@@ -66,18 +66,20 @@ client.on("message", async (msg) => {
     }
   } else if (isAdmin && msg.content.substring(0, 5) === "~$top") {
     let result;
-    await fetch(`${SERVER_URL}/functions/getTopTen?_ApplicationId=${APP_ID}`)
-    .then((res) => res.json())
-    .then((data) => result = data.result);
     const channel = client.channels.cache.get("919932087748919318");
     let messageString = ":rotating_light: **SAVAGE DOUBLEPOSTERS** :rotating_light: \n";
-    result.forEach(el => {
-      let discordUsername = el.attributes.discordUsername;
-      let discordId = el.attributes.userId;
-      let deleteCount = el.attributes.deleteCount;
-      messageString += `**${discordUsername}** *(${discordId})* - **${deleteCount}**\n`;
-    });
-    channel.send(messageString);
+    await fetch(`${SERVER_URL}/functions/getTopTen?_ApplicationId=${APP_ID}`)
+    .then((res) => res.json())
+    .then((data) => result = data.result)
+    .then(() => {
+      result.forEach(el => {
+        let discordUsername = el.discordUsername;
+        let discordId = el.userId;
+        let deleteCount = el.deleteCount;
+        messageString += `**${discordUsername}** *(${discordId})* - **${deleteCount}**\n`;
+      });
+      channel.send(messageString);
+    })
   } else if (isAdmin && msg.content.substring(0, 7) === "~$clear") {
     let result;
     let searchId = msg.content.substring(8);
