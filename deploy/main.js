@@ -8,7 +8,15 @@ const keepAlive = require("./server")
 
 keepAlive();
 
-const ADMIN_TEAM_IDS = ["343413591514284032", "208898272637485057", "797456657399152670"];
+const ADMIN_TEAM_IDS = [
+  "343413591514284032", //kone
+  "208898272637485057", //mauro
+  "797456657399152670", //kresimir
+  "940209372531937291", //rain
+  "706259952297181265", //crypto kid
+  "699187270455918664", //nikolas
+  "931340565533065276", //glad
+];
 
 //client.on("debug", console.log);
 
