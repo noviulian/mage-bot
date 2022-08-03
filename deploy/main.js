@@ -1,3 +1,4 @@
+const Database = require("@replit/database");
 const TOKEN = process.env['TOKEN'];
 const APP_ID = process.env["APP_ID"];
 const SERVER_URL = process.env["SERVER_URL"];
@@ -5,6 +6,8 @@ const Discord = require("discord.js");
 const client = new Discord.Client();
 const fetch = require("node-fetch");
 const keepAlive = require("./server")
+
+const db = new Database();
 
 keepAlive();
 
@@ -164,5 +167,107 @@ client.on("message", async (msg) => {
     console.log(`${currentAuthor.username}#${currentAuthor.discriminator}: ${currentMessageString} - ${deleteCheck}`);
   }
 });
+
+async function userExists(userId) {
+  const entries = db.list();
+  entries.forEach(el => {
+    if (el.userId == usedId) return true;
+  });
+  return false;
+}
+
+async function onMessage(req) {
+  const userId = req.userId;
+  const currMsg = req.currentMessage;
+  const discordUsername = req.discordUsername;
+  const discriminator = req.discriminator;
+
+  const userExists = await userExists(userId);
+  if (!userExists) {
+        let newUser = {};
+        newUser.lastMessage = currMsg;
+        newUser.userId = userId;
+        newUser.discordUsername = discordUsername;
+        newUser.discriminator = discriminator;
+        newUser.deleteCount = 0;
+        newUser.lastTime = Math.floor(Date.now() / 1000);
+        newUser.jobSeeker = 0;
+        db.set(userId, newUser);
+        return false;
+  }
+
+  const updatedUser = {
+    lastMessage: currMsg,
+    userId: userId,
+    discordUsername: discordUsername,
+    discriminator: discriminator,
+    deleteCount: user.deleteCount,
+    lastTime: Math.floor(Date.now() / 1000),
+    jobSeeker: user.jobSeeker,
+  }
+
+  let user = await db.get(userId);
+  let lastMsg = user.lastMessage;
+  if (lastMsg.length != currMsg.length) {
+    await db.set(userId, updatedUser);
+    return false;
+  }
+
+  if (lastMsg === currMsg && (Math.floor(Date.now() / 1000) - user.lastTime < 10800)) {
+    updatedUser.deleteCount += 1;
+    await db.set(userId, updatedUser);
+    return true;
+  } else {
+    await db.set(userId, updatedUser);
+    return false;
+  }
+}
+
+async function getTopTen() {
+  console.log("...");
+}
+
+async function getDeletedForUser(userId) {
+  if (!userExists(userId)) return 0;
+  let user = await db.get(userId);
+  return user.deletCount;
+}
+
+async function resetMessage(userId) {
+  if (!userExists(userId)) return 0;
+  let user = await db.get(userId);
+  user.lastMessage = "";
+  await db.set(userId, user);
+  return 1;
+}
+
+async function seekerCheck(userId) {
+  if (!userExists(userId)) {
+    let newUser = {};
+    newUser.lastMessage = currMsg;
+    newUser.userId = userId;
+    newUser.discordUsername = discordUsername;
+    newUser.discriminator = discriminator;
+    newUser.deleteCount = 0;
+    newUser.lastTime = Math.floor(Date.now() / 1000);
+    newUser.jobSeeker = Math.floor(Date.now() / 1000) + 3*259200;
+    db.set(userId, newUser);
+    return false;
+  }
+
+  let user = await db.get(userId);
+  if (user.jobSeeker > Math.floor(Date.now() / 1000)) return true;
+  let updatedUser = {
+    lastMessage: currMsg,
+    userId: userId,
+    discordUsername: discordUsername,
+    discriminator: discriminator,
+    deleteCount: user.deleteCount,
+    lastTime: Math.floor(Date.now() / 1000),
+    jobSeeker: Math.floor(Date.now() / 1000) + 3*259200,
+  }
+  await db.set(userId, jobSeeker);
+  return false;
+}
 
 client.login(TOKEN).catch(console.error);
