@@ -52,6 +52,7 @@ client.on("message", async (msg) => {
   ADMIN_TEAM_IDS.forEach(el => {
     if (msg.author.id === el) {
       isAdmin = true;
+      isMoralisTeam = true;
     }
   });
 
