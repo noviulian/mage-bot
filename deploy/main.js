@@ -25,6 +25,8 @@ const ADMIN_TEAM_IDS = [
 
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}`);
+    const channel = client.channels.cache.get("919932087748919318");
+    channel.send("Back to watching");
 });
 
 client.on("message", async (msg) => {
