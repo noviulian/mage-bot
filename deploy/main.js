@@ -21,12 +21,24 @@ const ADMIN_TEAM_IDS = [
   "931340565533065276", //glad
 ];
 
+let whitelist;
+async function initWhitelist() {
+  await fetch(`${SERVER_URL}/functions/whitelistInfo?_ApplicationId=${APP_ID}`)
+  .then((res) => res.json())
+  .then((data) => whitelist = data.result);
+}
+
+
+
+
 //client.on("debug", console.log);
 
 client.on("ready", () => {
     console.log(`Logged in as ${client.user.tag}`);
     const channel = client.channels.cache.get("919932087748919318");
     channel.send("Back to watching");
+    initWhitelist();
+    console.log(whitelist);
 });
 
 client.on("message", async (msg) => {
@@ -59,42 +71,79 @@ client.on("message", async (msg) => {
   });
 
   if (isAdmin && msg.content.substring(0, 7) === "~$check") {
-    let searchId = msg.content.substring(8);
-    let result;
-    await fetch(`${SERVER_URL}/functions/getDeletedForUser?_ApplicationId=${APP_ID}&userId=${searchId}`)
-    .then((res) => res.json())
-    .then((data) => result = data.result);
-    const channel = client.channels.cache.get("919932087748919318");
-    if (result != undefined) {
-      channel.send(`I have deleted messages from *${searchId}* **${result} times**`);
-    } else {
-      channel.send(`I have deleted messages from *${searchId}* **0 times**`);
-    }
+      let searchId = msg.content.substring(8);
+      let result;
+      await fetch(`${SERVER_URL}/functions/getDeletedForUser?_ApplicationId=${APP_ID}&userId=${searchId}`)
+      .then((res) => res.json())
+      .then((data) => result = data.result);
+      const channel = client.channels.cache.get("919932087748919318");
+      if (result != undefined) {
+        channel.send(`I have deleted messages from *${searchId}* **${result} times**`);
+      } else {
+        channel.send(`I have deleted messages from *${searchId}* **0 times**`);
+      }
   } else if (isAdmin && msg.content.substring(0, 5) === "~$top") {
-    let result;
-    const channel = client.channels.cache.get("919932087748919318");
-    let messageString = ":rotating_light: **SAVAGE DOUBLEPOSTERS** :rotating_light: \n";
-    await fetch(`${SERVER_URL}/functions/getTopTen?_ApplicationId=${APP_ID}`)
-    .then((res) => res.json())
-    .then((data) => result = data.result)
-    .then(() => {
-      result.forEach(el => {
-        let discordUsername = el.discordUsername;
-        let discordId = el.userId;
-        let deleteCount = el.deleteCount;
-        messageString += `**${discordUsername}** *(${discordId})* - **${deleteCount}**\n`;
-      });
-      channel.send(messageString);
-    })
+      let result;
+      const channel = client.channels.cache.get("919932087748919318");
+      let messageString = ":rotating_light: **SAVAGE DOUBLEPOSTERS** :rotating_light: \n";
+      await fetch(`${SERVER_URL}/functions/getTopTen?_ApplicationId=${APP_ID}`)
+      .then((res) => res.json())
+      .then((data) => result = data.result)
+      .then(() => {
+        result.forEach(el => {
+          let discordUsername = el.discordUsername;
+          let discordId = el.userId;
+          let deleteCount = el.deleteCount;
+          messageString += `**${discordUsername}** *(${discordId})* - **${deleteCount}**\n`;
+        });
+        channel.send(messageString);
+      })
   } else if (isAdmin && msg.content.substring(0, 7) === "~$clear") {
+      let result;
+      let searchId = msg.content.substring(8);
+      await fetch(`${SERVER_URL}/functions/resetMessage?_ApplicationId=${APP_ID}&userId=${searchId}`)
+      .then((res) => res.json())
+      .then((data) => result = data.result);
+      const channel = client.channels.cache.get("919932087748919318");
+      //console.log(result);
+      let messageString = result == 1 ? `Cleared message history for ${searchId}` : "Yikes, something ain't right";
+      channel.send(messageString);
+  } else if (isAdmin && msg.content.substring(0, 5) === "~$wla") { 
+      let result;
+      let searchId = msg.content.substring(6);
+      await fetch(`${SERVER_URL}/functions/whitelistAdd?_ApplicationId=${APP_ID}&userId=${searchId}`)
+      .then((res) => res.json())
+      .then((data) => result = data.result);
+      const channel = client.channels.cache.get("919932087748919318");
+      let messageString = result == 1 ? `Added ${searchId} to whitelist` : "Yikes, something ain't right (that Id seems to be already whitelisted)";
+      if (result == 1) whitelist.push(searchId);
+      channel.send(messageString);
+  } else if (isAdmin && msg.content.substring(0, 5) === "~$wlr") {
+      let result;
+      let searchId = msg.content.substring(6);
+      await fetch(`${SERVER_URL}/functions/whitelistRemove?_ApplicationId=${APP_ID}&userId=${searchId}`)
+      .then((res) => res.json())
+      .then((data) => result = data.result);
+      const channel = client.channels.cache.get("919932087748919318");
+      let messageString = result == 1 ? `Removed ${searchId} from whitelist` : "Yikes, something ain't right (that Id doesn't seem to be whitelisted)";
+      if (result == 1) {
+        for (let i = 0; i < whitelist.length; i++) {
+          if (whitelist[i] == searchId) whitelist[i] = "0";
+        }
+      }
+      channel.send(messageString);
+  } else if (isAdmin && msg.content.substring(0, 5) === "~$wli") { 
     let result;
-    let searchId = msg.content.substring(8);
-    await fetch(`${SERVER_URL}/functions/resetMessage?_ApplicationId=${APP_ID}&userId=${searchId}`)
+    let searchId = msg.content.substring(6);
+    await fetch(`${SERVER_URL}/functions/whitelistInfo?_ApplicationId=${APP_ID}`)
     .then((res) => res.json())
     .then((data) => result = data.result);
     const channel = client.channels.cache.get("919932087748919318");
-    //console.log(result);
-    let messageString = result == 1 ? `Cleared message history for ${searchId}` : "Yikes, something ain't right";
+    whitelist = result;
+    let messageString = ":scroll: Current whitelist: :scroll:\n";
+    whitelist.forEach(el => {
+      messageString += ` - ${el}`;
+    })
     channel.send(messageString);
   } else if (!isAdmin && msg.channel.id == "970071769589370890") { //check if message is in job-seekers
     let _delCheckFail = false;
@@ -157,9 +206,9 @@ client.on("message", async (msg) => {
       deleteCheck = deleteCheck.result;
     }
     //console.log(deleteCheck);
-    const whiteListArray = ["gm", "gm!", "gm!!!", "gm!!!!", "gn", "gn!"];
+    const whiteListArray = ["gm", "gm!", "gm!!!", "gm!!!!", "gn", "gn!", "!rank"];
     const channelWhitelist = ["876079404676186112", "932570355372023828"];
-    if (whiteListArray.includes(currentMessageString) || channelWhitelist.includes(msg.channel.id)) {
+    if (whiteListArray.includes(currentMessageString) || channelWhitelist.includes(msg.channel.id) || whitelist.includes(currentAuthor.id)) {
       deleteCheck = false;
     }
     if (deleteCheck) {
@@ -170,6 +219,8 @@ client.on("message", async (msg) => {
     console.log(`${currentAuthor.username}#${currentAuthor.discriminator}: ${currentMessageString} - ${deleteCheck}`);
   }
 });
+
+//IGNORE - migration functions below
 
 async function userExists(userId) {
   const entries = db.list();
