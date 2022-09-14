@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@replit/database": "^2.0.2",
     "discord.js": "^12.5.1",
+    "express": "^4.17.2",
     "node-fetch": "^2.0.0"
   }
 }
