@@ -11,7 +11,6 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^12.5.1",
-    "moralis": "^0.0.178",
     "node-fetch": "^2.0.0"
   }
 }
