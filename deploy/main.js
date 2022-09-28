@@ -155,7 +155,7 @@ client.on("message", async (msg) => {
     const channel = client.channels.cache.get("919932087748919318");
     if (_delCheckFail) {
       deleteCheck = false;
-      channel.send(`Delete check failed for msgId: ${msg.id} from user: ${msg.author.id}`);
+      channel.send(`Delete check failed for: https://discord.com/channels/819584798443569182/${msg.channel.id}/${msg.id} from: ${msg.author.username}#${msg.author.discriminator}*(${msg.author.id})*`);
     } else {
       deleteCheck = await deleteCheck.json();
       deleteCheck = deleteCheck.result;
