@@ -147,17 +147,14 @@ client.on("message", async (msg) => {
     channel.send(messageString);
   } else if (!isAdmin && msg.channel.id == "970071769589370890") { //check if message is in job-seekers
     let _delCheckFail = false;
-    let _error;
     let deleteCheck = await fetch(`${SERVER_URL}/functions/seekerCheck?_ApplicationId=${APP_ID}&userId=${msg.author.id}`)
     .catch((err) => {
       console.log(err);
       _delCheckFail = true;
-      _error = err;
     })
     const channel = client.channels.cache.get("919932087748919318");
     if (_delCheckFail) {
       deleteCheck = false;
-      channel.send(_error);
       channel.send(`Delete check failed for: https://discord.com/channels/819584798443569182/${msg.channel.id}/${msg.id} from: ${msg.author.username}#${msg.author.discriminator}*(${msg.author.id})*`);
 
     } else {
@@ -196,15 +193,19 @@ client.on("message", async (msg) => {
     const channel = client.channels.cache.get("919932087748919318");
     //console.log(channel);
     let _delCheckFail = false;
+    let _error;
     let deleteCheck = await fetch(`${SERVER_URL}/functions/onMessage?_ApplicationId=${APP_ID}&userId=${params.userId}&currentMessage=${params.currentMessage}
     &discriminator=${params.discriminator}&discordUsername=${params.discordUsername}`)
     .catch((err) => {
       console.log(err);
       _delCheckFail = true;
+      _error = err;
     })
     if (_delCheckFail) {
       deleteCheck = false;
-      channel.send(`Delete check failed for msgId: ${msg.id} from user: ${msg.author.id}`);
+      channel.send(_error);
+      channel.send(`Delete check failed for: https://discord.com/channels/819584798443569182/${msg.channel.id}/${msg.id} 
+       from: ${msg.author.username}#${msg.author.discriminator}*(${msg.author.id})*`);
     } else {
       deleteCheck = await deleteCheck.json();
       deleteCheck = deleteCheck.result;
