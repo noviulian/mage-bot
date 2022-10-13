@@ -155,8 +155,7 @@ client.on("message", async (msg) => {
     const channel = client.channels.cache.get("919932087748919318");
     if (_delCheckFail) {
       deleteCheck = false;
-      channel.send(`Delete check failed for: https://discord.com/channels/819584798443569182/${msg.channel.id}/${msg.id} from: ${msg.author.username}#${msg.author.discriminator}*(${msg.author.id})*`);
-
+      channel.send(`Delete check failed for: https://discord.com/channels/819584798443569182/${msg.channel.id}/${msg.id} from: ${msg.author.username}#${msg.author.discriminator}*(${msg.author.id})* (job seekers)`);
     } else {
       deleteCheck = await deleteCheck.json();
       deleteCheck = deleteCheck.result;
@@ -203,7 +202,7 @@ client.on("message", async (msg) => {
     })
     if (_delCheckFail) {
       deleteCheck = false;
-      channel.send(_error);
+      await channel.send(_error.stack, _error.name, _error.message);
       channel.send(`Delete check failed for: https://discord.com/channels/819584798443569182/${msg.channel.id}/${msg.id} 
        from: ${msg.author.username}#${msg.author.discriminator}*(${msg.author.id})*`);
     } else {
