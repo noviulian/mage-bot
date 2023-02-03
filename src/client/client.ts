@@ -17,7 +17,18 @@ export class ExtendedClient extends Client {
 	public commands: Collection<String, CommandType> = new Collection();
 
 	constructor() {
-		super({ intents: 32767 });
+		super({
+			intents: [
+				'GUILDS',
+				'GUILD_MESSAGES',
+				'GUILD_BANS',
+				'GUILD_MESSAGE_REACTIONS',
+				'GUILD_MEMBERS',
+				'GUILD_PRESENCES',
+				'DIRECT_MESSAGES',
+				'GUILD_INTEGRATIONS',
+			],
+		});
 	}
 
 	start() {
@@ -45,7 +56,6 @@ export class ExtendedClient extends Client {
 		const commandFiles = await globPromose(
 			`${__dirname}/../commands/*/*{.ts,.js}`,
 		);
-		console.log({ commandFiles });
 
 		commandFiles.forEach(async (filePath) => {
 			const command: CommandType = await this.importFile(filePath);
@@ -55,17 +65,32 @@ export class ExtendedClient extends Client {
 			slashCommands.push(command);
 		});
 
+		this.on('ready', () => {
+			this.guilds.cache.forEach((guild) => {
+				this.registerCommands({
+					commands: slashCommands,
+					guildId: guild.id,
+				});
+			});
+		});
+
+		this.on('guildCreate', (guild) => {
+			this.registerCommands({
+				commands: slashCommands,
+				guildId: guild.id,
+			});
+		});
+
 		//events
 		const eventFiles = await globPromose(
 			`${__dirname}/../events/*{.ts,.js}`,
 		);
-		console.log({ eventFiles });
 
 		eventFiles.forEach(async (filePath) => {
 			const event: Event<keyof ClientEvents> = await this.importFile(
 				filePath,
 			);
-			this.on(event.event, event.run);
+			this.on(event.name, event.run);
 		});
 	}
 }
