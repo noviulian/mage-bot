@@ -1,4 +1,4 @@
-import { Command } from 'client/command';
+import { Command } from '../../client/command';
 
 export default new Command({
 	name: 'ping',
