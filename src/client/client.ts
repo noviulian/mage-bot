@@ -5,10 +5,10 @@ import {
 	Collection,
 } from 'discord.js';
 
-import { CommandType } from '@bot/types/command';
-import { Event } from './Event';
+import { CommandType } from '../types/command';
+import { Event } from './event';
 import { RegisterCommandsOptions } from '../types/client';
-import { config } from '@src/config';
+import { config } from '../config';
 import glob from 'glob';
 import { promisify } from 'util';
 
@@ -43,7 +43,7 @@ export class ExtendedClient extends Client {
 		//commands
 		const slashCommands: ApplicationCommandDataResolvable[] = [];
 		const commandFiles = await globPromose(
-			`${__dirname}/../../commands/*/*{.ts,.js}`,
+			`${__dirname}/../commands/*/*{.ts,.js}`,
 		);
 		console.log({ commandFiles });
 
@@ -57,7 +57,7 @@ export class ExtendedClient extends Client {
 
 		//events
 		const eventFiles = await globPromose(
-			`${__dirname}/../../events/*{.ts,.js}`,
+			`${__dirname}/../events/*{.ts,.js}`,
 		);
 		console.log({ eventFiles });
 

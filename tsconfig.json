@@ -9,11 +9,6 @@
 		"allowJs": true,
 		"outDir": "build",
 		"rootDir": "src",
-		"baseUrl": "src",
-		"paths": {
-			"@src/*": ["./*"],
-			"@bot/*": ["./bot/*"],
-			"@server/*": ["./server/*"]
-		}
+		"baseUrl": "src"
 	}
 }
