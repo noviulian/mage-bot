@@ -19,14 +19,17 @@ export class ExtendedClient extends Client {
 	constructor() {
 		super({
 			intents: [
-				'GUILDS',
-				'GUILD_MESSAGES',
-				'GUILD_BANS',
-				'GUILD_MESSAGE_REACTIONS',
-				'GUILD_MEMBERS',
-				'GUILD_PRESENCES',
-				'DIRECT_MESSAGES',
-				'GUILD_INTEGRATIONS',
+				'MessageContent',
+				'GuildWebhooks',
+				'Guilds',
+				'GuildMessages',
+				'GuildMessageReactions',
+				'GuildMembers',
+				'DirectMessages',
+				'DirectMessageReactions',
+				'GuildBans',
+				'GuildPresences',
+				'GuildIntegrations',
 			],
 		});
 	}

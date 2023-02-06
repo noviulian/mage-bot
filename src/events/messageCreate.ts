@@ -1,25 +1,45 @@
 import { Event } from '../client/event';
 import { PrismaClient } from '@prisma/client';
+import { ChannelType } from 'discord.js';
 const prisma = new PrismaClient();
 
 export default new Event('messageCreate', async (message) => {
-	const users = await prisma.user.findMany();
+	if (message.author.bot) return;
+	if (message.channel.type === ChannelType.DM) return;
+	if (!message.guild) return;
+	if (!message.content) return;
 
-	//create a user if they don't exist
-	if (!users.find((user) => user.userId === message.author.id)) {
-		const user = await prisma.user.create({
+	const user = await prisma.user.findUnique({
+		where: {
+			userId: message.author.id,
+		},
+	});
+
+	//if the user doesn't exist, create them
+	if (!user) {
+		await prisma.user.create({
 			data: {
 				username: message.author.username,
 				userId: message.author.id,
 				lastMessage: message.content,
-				joinedAt: message.guild.joinedAt,
+				accountCreated: message.author.createdAt,
+				joinedServer: message.guild.joinedAt,
+				createdAt: new Date(),
 			},
 		});
-		console.log(user);
+		return;
+	}
+
+	//if the user's last message is the same as the current message, send a warning and delete the message
+	if (user.lastMessage === message.content) {
+		message.channel.send({
+			content: `Hey ${message.author}, please don't spam the same message!`,
+		});
+		message.delete();
 	}
 
 	//update the user's last message
-	await prisma.user.update({
+	const updatedUser = await prisma.user.update({
 		where: {
 			userId: message.author.id,
 		},
