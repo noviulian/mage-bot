@@ -11,11 +11,14 @@ datasource db {
 }
 
 model User {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId         String   @unique
-  username       String
-  lastMessage    String
-  joinedServer   DateTime
-  accountCreated DateTime
-  createdAt      DateTime @default(now())
+  id                   String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId               String   @unique
+  username             String
+  tag                  String
+  lastMessage          String
+  deletedMessagesCount Int
+  whitelisted          Boolean  @default(false)
+  joinedServer         DateTime
+  accountCreated       DateTime
+  createdAt            DateTime @default(now())
 }

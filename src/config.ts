@@ -5,11 +5,7 @@ interface ProcessEnv extends DotenvParseOutput {
 	BOT_TOKEN: string;
 	CLIENT_ID: string;
 	GUILD_ID: string;
-
-	//moralis
-	MORALIS_API_KEY: string;
-	MORALIS_SERVER_URL: string;
-	MORALIS_SERVER_APP_ID: string;
+	LOG_CHANNEL_ID: string;
 }
 
 export const config = env().parsed as ProcessEnv;
