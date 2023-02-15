@@ -10,9 +10,6 @@ export default new Event('ready', async (client: ExtendedClient) => {
 		`${client.user.username}#${client.user.discriminator} is online and ready`
 			.green.bold,
 	);
-	client.guilds.cache.forEach((guild) => {
-		console.log(`Guild: ${guild.name}`.yellow.bold);
-	});
 
 	await prisma.$connect().then(() => {
 		console.log('Connected to database'.green.bold);
