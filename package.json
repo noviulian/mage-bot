@@ -5,12 +5,10 @@
 	"author": "iuliannov <contact@iuliannov.com>",
 	"license": "MIT",
 	"scripts": {
-		"build": "tsc",
+		"build": "rm -rf ./build && tsc",
 		"start": "node .",
 		"dev": "ts-node src/index.ts",
-		"prisma": "prisma",
-		"prisma:generate": "prisma generate",
-		"prisma:studio": "prisma studio"
+		"prisma": "prisma"
 	},
 	"dependencies": {
 		"@prisma/client": "^4.9.0",

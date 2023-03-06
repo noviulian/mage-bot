@@ -9,20 +9,11 @@ import {
 
 import { ExtendedClient } from '../client/client';
 
-/**
- * {
- *  name: "commandname",
- * description: "any description",
- * run: async({ interaction }) => {
- *
- * }
- * }
- */
 export interface ExtendedInteraction extends CommandInteraction {
 	member: GuildMember;
 }
 
-export type CommandOptionType = ApplicationCommandOptionType;
+export const CommandOptionType = ApplicationCommandOptionType;
 
 interface RunOptions {
 	client: ExtendedClient;

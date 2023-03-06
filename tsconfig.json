@@ -8,7 +8,10 @@
 		"skipLibCheck": true,
 		"allowJs": true,
 		"outDir": "build",
-		"rootDir": "src",
-		"baseUrl": "src"
+		"rootDir": ".",
+		"baseUrl": "src",
+		"paths": {
+			"~/*": ["./src/*"]
+		}
 	}
 }

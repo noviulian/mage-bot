@@ -1,9 +1,9 @@
 import { Event } from '../client/event';
-import { PrismaClient, User } from '@prisma/client';
+import { DiscordMember } from '@prisma/client';
 import { ChannelType, TextChannel, Role } from 'discord.js';
 import { client } from '../client';
 import { config } from '../config';
-const prisma = new PrismaClient();
+import { prisma } from '../lib/prisma';
 
 export default new Event('messageCreate', async (message) => {
 	if (message.author.bot || message.author.id === client.user.id) return;
@@ -12,9 +12,9 @@ export default new Event('messageCreate', async (message) => {
 
 	const currentMessage = message.content.toLowerCase();
 
-	const user = await prisma.user.findUnique({
+	const user = await prisma.discordMember.findUnique({
 		where: {
-			userId: message.author.id,
+			discordId: message.author.id,
 		},
 	});
 
@@ -37,16 +37,14 @@ export default new Event('messageCreate', async (message) => {
 
 	//if the user doesn't exist, create them in the database and return
 	if (!user) {
-		await prisma.user.create({
+		await prisma.discordMember.create({
 			data: {
 				username: message.author.username,
-				userId: message.author.id,
+				discordId: message.author.id,
 				lastMessage: message.content,
 				deletedMessagesCount: 0,
-				tag: message.author.tag,
-				accountCreated: message.author.createdAt,
+				tag: `${message.author.username}#${message.author.discriminator}`,
 				joinedServer: message.guild.joinedAt,
-				createdAt: new Date(),
 			},
 		});
 		return;
@@ -62,7 +60,7 @@ export default new Event('messageCreate', async (message) => {
 		});
 	}
 
-	const whitelistedUsers = await prisma.user.findMany({
+	const whitelistedUsers = await prisma.discordMember.findMany({
 		where: {
 			whitelisted: true,
 		},
@@ -72,13 +70,13 @@ export default new Event('messageCreate', async (message) => {
 		(r: Role) => r.name === 'Moralis Team',
 	);
 	const wordWhitelisted = whitelistedWords.some(
-		(word: string) => word === currentMessage, // maybe its GM YES NO
+		(word: string) => word === currentMessage.toLowerCase(), // maybe its GM YES NO
 	);
 	const userWhitelisted = whitelistedUsers.some(
-		(user: User) => user.userId === message.author.id,
+		(user: DiscordMember) => user.discordId === message.author.id,
 	);
 	if (
-		user.lastMessage === message.content &&
+		user.lastMessage === currentMessage &&
 		!hasMoralisRole &&
 		!wordWhitelisted &&
 		!userWhitelisted
@@ -93,9 +91,9 @@ export default new Event('messageCreate', async (message) => {
 				await message.delete().catch(async (e) => sendLog(failMessage));
 
 				//update the user's deleted messages count
-				await prisma.user.update({
+				await prisma.discordMember.update({
 					where: {
-						userId: message.author.id,
+						discordId: message.author.id,
 					},
 					data: {
 						deletedMessagesCount: {
@@ -110,10 +108,10 @@ export default new Event('messageCreate', async (message) => {
 	}
 
 	//update the user's last message
-	await prisma.user
+	await prisma.discordMember
 		.update({
 			where: {
-				userId: message.author.id,
+				discordId: message.author.id,
 			},
 			data: {
 				lastMessage: currentMessage,

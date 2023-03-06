@@ -4,8 +4,8 @@ import {
 	ClientEvents,
 	Collection,
 } from 'discord.js';
-
-import { CommandType } from '../types/command';
+import 'colors';
+import type { CommandType } from '../types/command';
 import { Event } from './event';
 import { RegisterCommandsOptions } from '../types/client';
 import { config } from '../config';
@@ -46,10 +46,12 @@ export class ExtendedClient extends Client {
 	async registerCommands({ guildId, commands }: RegisterCommandsOptions) {
 		if (guildId) {
 			this.guilds.cache.get(guildId)?.commands.set(commands);
-			console.log(`Registering commands to guild id: ${guildId}`);
+			console.log(
+				`Registering commands to guild id:` + `${guildId}`.blue.bold,
+			);
 		} else {
 			this.application?.commands.set(commands);
-			console.log('Registering global commands');
+			console.log('Registering global commands'.green.bold);
 		}
 	}
 
@@ -66,6 +68,7 @@ export class ExtendedClient extends Client {
 
 			this.commands.set(command.name, command);
 			slashCommands.push(command);
+			console.log(`Registering command: ${command.name}`.yellow.bold);
 		});
 
 		this.on('ready', () => {
