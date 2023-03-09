@@ -16,7 +16,7 @@ export default new Command({
 		});
 
 		if (results) {
-			let message = `:rotating_light: **SAVAGE DOUBLEPOSTERS** :rotating_light:\n`;
+			let message = `:rotating_light: **Top Spammers** :rotating_light:\n`;
 			for (let i = 0; i < results.length; i++) {
 				const user = results[i];
 				message += `${i + 1}. **${user.username}** *(${

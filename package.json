@@ -1,12 +1,12 @@
 {
 	"name": "friday",
-	"version": "2.0.0",
+	"version": "0.0.2",
 	"main": "build/index.js",
-	"author": "iuliannov <contact@iuliannov.com>",
+	"author": "noviulian <personal@iuliannov.com>",
 	"license": "MIT",
 	"scripts": {
 		"build": "rm -rf ./build && tsc",
-		"start": "node .",
+		"start": "node build/index.js",
 		"dev": "ts-node src/index.ts",
 		"prisma": "prisma"
 	},

@@ -12,6 +12,12 @@ export default new Event('messageCreate', async (message) => {
 
 	const currentMessage = message.content.toLowerCase();
 
+	const replies = {
+		failMessage: `${message.author.tag}: ${currentMessage} - FAILED TO DELETE in <#${message.channel.id}>`,
+		successMessage: `${message.author.tag}: ${currentMessage} - DELETED in <#${message.channel.id}>`,
+		warnMessage: `${message.author.tag} please don't send the same message twice`,
+	};
+
 	const user = await prisma.discordMember.findUnique({
 		where: {
 			discordId: message.author.id,
@@ -75,20 +81,14 @@ export default new Event('messageCreate', async (message) => {
 	const userWhitelisted = whitelistedUsers.some(
 		(user: DiscordMember) => user.discordId === message.author.id,
 	);
-	if (
-		user.lastMessage === currentMessage &&
-		!hasMoralisRole &&
-		!wordWhitelisted &&
-		!userWhitelisted
-	) {
-		const failMessage = `${message.author.tag}: ${currentMessage} - FAILED TO DELETE in <#${message.channel.id}>`;
-		const successMessage = `${message.author.tag}: ${currentMessage} - DELETED in <#${message.channel.id}>`;
-		const warnMessage = `${message.author.tag} please don't send the same message twice`;
-
-		await message.reply(warnMessage).then((botMessage) => {
+	const canType = hasMoralisRole || wordWhitelisted || userWhitelisted;
+	if (user.lastMessage === currentMessage && !canType) {
+		await message.reply(replies.warnMessage).then((botMessage) => {
 			async function deleteMessages() {
-				await botMessage.delete().catch((e) => console.log(e));
-				await message.delete().catch(async (e) => sendLog(failMessage));
+				await botMessage.delete().catch(() => console.error());
+				await message
+					.delete()
+					.catch(async (e) => sendLog(replies.failMessage));
 
 				//update the user's deleted messages count
 				await prisma.discordMember.update({
@@ -104,7 +104,9 @@ export default new Event('messageCreate', async (message) => {
 			}
 			setTimeout(deleteMessages, 3000);
 		});
-		await sendLog(successMessage).catch((e) => sendLog(failMessage));
+		await sendLog(replies.successMessage).catch((e) =>
+			sendLog(replies.failMessage),
+		);
 	}
 
 	//update the user's last message
