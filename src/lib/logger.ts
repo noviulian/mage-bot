@@ -24,7 +24,7 @@ export class Logger {
 		return date.toUTCString();
 	}
 
-	consoleLog(logMessage: string): void {
+	tableLog(logMessage: string): void {
 		const data = {
 			discordId: this.message.author.id,
 			username: this.message.author.tag,
@@ -37,7 +37,7 @@ export class Logger {
 	}
 
 	async success(): Promise<void> {
-		this.consoleLog('Deleted message: ');
+		this.tableLog('Deleted message: ');
 		await this.logChannel.send(
 			`${this.message.author.tag}: ${this.currentMessage.slice(
 				0,
@@ -47,7 +47,7 @@ export class Logger {
 	}
 
 	async error(error: Error): Promise<void> {
-		this.consoleLog('Failed to delete message: ');
+		this.tableLog('Failed to delete message: ');
 		await this.logChannel.send(
 			`${this.message.author.tag}: ${this.currentMessage.slice(
 				0,
@@ -72,7 +72,7 @@ export class Logger {
 	}
 
 	async sendLog(message: string): Promise<void> {
-		this.consoleLog('Log message: ');
+		this.tableLog('Log message: ');
 		await this.logChannel.send(message);
 	}
 }
